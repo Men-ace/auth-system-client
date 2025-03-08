@@ -1,11 +1,12 @@
-99% of storage used … If you run out, you can't create, edit and upload files. Get 100 GB of storage for $1.99 $0.49/month for 2 months.
 import mongoose from "mongoose";
+
+const DB_CONNECTION_URI = process.env.CONNECTION_URI + "/auth-system-api"
 
 export const connectToMongoDb = () => {
   try {
-    const connect = mongoose.connect(process.env.DB_CONNECT_URL + "/auth-system-oct")
+    const connect = mongoose.connect(DB_CONNECTION_URI)
     if(connect) {
-      console.log(`Database conected: ${process.env.DB_CONNECT_URL}/auth-system-oct`);
+      console.log("Database connected");
     }
   } catch (error) {
     console.log("Error:", error);
