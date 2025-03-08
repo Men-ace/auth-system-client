@@ -33,6 +33,8 @@ userRouter.post("/", async(req, res)=>{
             sendVerificationEmail(user.email, user.name, verificationLink)
           }
         }
+
+
         user?._id
         ? buildSuccessResponse(res, {}, "Check your inbox/spam to verify your email") 
         : buildErrorResponse(res, "Could not register the user")
@@ -44,3 +46,36 @@ userRouter.post("/", async(req, res)=>{
       buildErrorResponse(res, error.message)
     }
   })
+
+  userRouter.patch("/", async(req, res) => {
+    try {
+      // get userEmail and token from req body
+      const { userEmail, token } = req.body
+  
+      // check if the userEMail and token record exist in our session
+      const result = await deleteSession({ userEmail, token })
+  
+      // if token and email exist in our session, proceed, else don't proceed
+      if(!result?.acknowledged){
+        buildErrorResponse(res, "Invalid Link")
+      }
+      
+      // Valid Link
+      // Go and find the user in the db and update it
+      const user = await updateUser({ email: userEmail }, { isVerified: true })
+  
+      if(user?._id){
+        // send verified email
+        // assignment
+      }
+  
+      user?._id
+        ? buildSuccessResponse(res, {}, "Successfully verified, please login")
+        : buildErrorResponse(res, "Could not verify")
+    } catch (error) {
+        buildErrorResponse(res, "Could not verify")
+    }
+  })
+  
+  export default userRouter
+
