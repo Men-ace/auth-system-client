@@ -40,3 +40,30 @@ export const userAuth = async(req, res, next) => {
     buildErrorResponse(res, "Invalid auth token")
   }
 }
+
+export const refreshAuth = async(req, res, next) => {
+    try {
+      // get refreshJWT fron req headers
+      const { authorization } = req.headers
+  
+      const decodedrefreshJWT = verifyRefreshJWT(authorization)
+  
+      if(!decodedrefreshJWT?.email){
+        buildErrorResponse(res, "Invalid token!!!")
+        return
+      }
+  
+      // get user info
+      const user = await findUserByEmail(decodedrefreshJWT.email)
+  
+      if(user?._id && user?.isVerified){
+        req.userInfo = user
+        next()
+        return
+      }
+  
+      throw new Error("Invalid token!!");
+    } catch (error) {
+      buildErrorResponse(res, "Invalid token!!")
+    }
+  }
